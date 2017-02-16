@@ -11,12 +11,15 @@ fun main(args: Array<String>) {
     val board = Board()
     Action.Reset().executeOn(board)
     var currentColor = Color.WHITE
+    println()
     board.print()
     println("${currentColor.name}, your turn")
+    println()
     readLoop { input ->
         val action = parseAction(input)
         if(action == null) {
             println("I did not understand that. Please try again")
+            println()
             skip()
         }
         try {
@@ -24,12 +27,14 @@ fun main(args: Array<String>) {
         } catch (e: InvalidMoveException) {
             println("Impossible move: ${e.message}")
             println("${currentColor.name}, try again")
+            println()
             skip()
         }
         currentColor = when(currentColor) { Color.WHITE -> Color.BLACK; Color.BLACK -> Color.WHITE }
         if(action is Action.Reset) currentColor = Color.WHITE
         board.print()
         println("${currentColor.name}, your turn")
+        println()
     }
     println("Quitting the game. Bye!")
 }
@@ -65,6 +70,7 @@ class LoopExecutionSkippedException : Exception()
 class LoopExitedException : Exception()
 
 fun Board.print() {
+    println()
     println(PRINT_TOP)
     Board.RANKS.reversed().forEach { rank ->
         print("$rank │ ")
@@ -81,6 +87,7 @@ fun Board.print() {
     Board.FILES.forEach { file ->
         print("  $PIECE_SPACE$file")
     }
+    println()
     println()
 }
 
