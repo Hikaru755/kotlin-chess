@@ -2,6 +2,7 @@ package com.rrpictureproductions.chess
 
 import com.rrpictureproductions.chess.Field
 import com.rrpictureproductions.chess.figures.*
+import javafx.geometry.Pos
 
 sealed class Action {
 
@@ -16,29 +17,27 @@ sealed class Action {
     class Reset : Action() {
         override fun checkIsValidOn(board: Board) = Unit
 
-        override fun doExecuteOn(board: Board) = board.apply {
-            files.values.flatMap { it.values }
-                    .map { it.apply { piece = null } }
-                    .filter { field -> field.rank in Board.STARTING_RANKS }
-                    .forEach { field ->
-                        val (file, rank) = field
-                        val color = when (rank) {
-                            in Board.WHITE_RANKS -> Color.WHITE
-                            in Board.BLACK_RANKS -> Color.BLACK
-                            else -> throw IllegalArgumentException("Invalid starting rank: $rank")
-                        }
-                        field.piece = if (rank in Board.PAWN_RANKS) {
-                            Pawn(color)
-                        } else when (file) {
-                            Board.QUEEN_FILE -> Queen(color)
-                            Board.KING_FILE -> King(color)
-                            in Board.ROOK_FILES -> Rook(color)
-                            in Board.KNIGHT_FILES -> Knight(color)
-                            in Board.BISHOP_FILES -> Bishop(color)
-                            else -> throw IndexOutOfBoundsException()
-                        }
+        override fun doExecuteOn(board: Board) = board.fields
+                .map { it.apply { piece = null } }
+                .filter { field -> field.rank in Board.STARTING_RANKS }
+                .forEach { field ->
+                    val (file, rank) = field
+                    val color = when (rank) {
+                        in Board.WHITE_RANKS -> Color.WHITE
+                        in Board.BLACK_RANKS -> Color.BLACK
+                        else -> throw IllegalArgumentException("Invalid starting rank: $rank")
                     }
-        }.discard
+                    field.piece = if (rank in Board.PAWN_RANKS) {
+                        Pawn(color)
+                    } else when (file) {
+                        Board.QUEEN_FILE -> Queen(color)
+                        Board.KING_FILE -> King(color)
+                        in Board.ROOK_FILES -> Rook(color)
+                        in Board.KNIGHT_FILES -> Knight(color)
+                        in Board.BISHOP_FILES -> Bishop(color)
+                        else -> throw IndexOutOfBoundsException()
+                    }
+                }
     }
 
     class Move(val from: Position, val to: Position) : Action() {
@@ -56,7 +55,7 @@ sealed class Action {
         }
 
         private fun checkPath(board: Board, fromField: Field, toField: Field) {
-            val nextPosition = getStepsIterator(from, to)
+            val nextPosition = getStraightPathStepsIterator(from, to)
             var next = nextPosition(fromField.position)
             while (next != toField.position) {
                 if (board[next].piece != null) {
@@ -74,7 +73,15 @@ sealed class Action {
             startField.piece = null
             endField.piece = piece
         }
+    }
 
+    companion object {
+        fun getMove(board: Board, from: Position, to: Position): Move {
+            val fromField = board[from]
+            val toField = board[to]
+            val movingPiece = fromField.piece ?: throw InvalidMoveException("There is no piece on $from")
+            TODO()
+        }
     }
 }
 
@@ -94,7 +101,7 @@ fun getPathType(from: Position, to: Position): PathType {
     return PathType(fileStep, rankStep)
 }
 
-fun getStepsIterator(from: Position, to: Position): (Position) -> Position {
+fun getStraightPathStepsIterator(from: Position, to: Position): (Position) -> Position {
     val pathType = getPathType(from, to)
     return { it.move(pathType.fileStep, pathType.rankStep) ?: throw RuntimeException("This should not happen") }
 }

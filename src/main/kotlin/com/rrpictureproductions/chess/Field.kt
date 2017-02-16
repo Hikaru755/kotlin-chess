@@ -26,7 +26,7 @@ data class Field(val file: Board.File, val rank: Int, var piece: ChessPiece? = n
         if(rank !in Board.RANKS) throw InvalidFieldException(this.toString())
     }
 
-    override fun toString() = "$file$rank"
+    override fun toString() = "Field $file$rank"
 }
 
 class InvalidFieldException : Exception {

@@ -1,5 +1,6 @@
 package com.rrpictureproductions.chess.figures
 
+import com.rrpictureproductions.chess.Action
 import com.rrpictureproductions.chess.Board
 import com.rrpictureproductions.chess.Position
 import com.rrpictureproductions.chess.crossproduct
@@ -16,17 +17,27 @@ import kotlin.collections.asSequence as lazy
 abstract class ChessPiece(val initial: String, val color: Color) {
     open val canJump = false
     abstract fun getReachablePositionsFrom(position: Position): Set<Position>
+    abstract fun getPossibleMoves(board: Board, position: Position): Set<Action.Move>
     override fun toString(): String = unicodePiece(initial, color)
 }
 
 enum class Color { WHITE, BLACK }
 
 class King(color: Color) : ChessPiece(KING, color) {
+
     override fun getReachablePositionsFrom(position: Position) =
             Board.getAdjacentPositions(position)
+
+    override fun getPossibleMoves(board: Board, position: Position) =
+            getReachablePositionsFrom(position)
+                    .minus(board.getPositionsUnderAttack())
+                    .map { Action.Move(position, position) }
+                    .toSet()
 }
 
 class Queen(color: Color) : ChessPiece(QUEEN, color) {
+    override fun getPossibleMoves(board: Board, position: Position): Set<Action.Move> = TODO()
+
     override fun getReachablePositionsFrom(position: Position) = Board.run {
         getPositionsOnFile(position.file)
                 .plus(getPositionsOnRank(position.rank))
@@ -36,6 +47,8 @@ class Queen(color: Color) : ChessPiece(QUEEN, color) {
 }
 
 class Rook(color: Color) : ChessPiece(ROOK, color) {
+    override fun getPossibleMoves(board: Board, position: Position): Set<Action.Move> = TODO()
+
     override fun getReachablePositionsFrom(position: Position) = Board.run {
         getPositionsOnFile(position.file)
                 .plus(getPositionsOnRank(position.rank))
@@ -44,11 +57,15 @@ class Rook(color: Color) : ChessPiece(ROOK, color) {
 }
 
 class Bishop(color: Color) : ChessPiece(BISHOP, color) {
+    override fun getPossibleMoves(board: Board, position: Position): Set<Action.Move> = TODO()
+
     override fun getReachablePositionsFrom(position: Position) =
             Board.getDiagonalPositionsFrom(position)
 }
 
 class Knight(color: Color) : ChessPiece(KNIGHT, color) {
+    override fun getPossibleMoves(board: Board, position: Position): Set<Action.Move> = TODO()
+
     override val canJump = true
     override fun getReachablePositionsFrom(position: Position) =
             setOf(-2, -1, 1, 2).lazy().crossproduct(setOf(-2, -1, 1, 2).lazy())
@@ -59,6 +76,8 @@ class Knight(color: Color) : ChessPiece(KNIGHT, color) {
 }
 
 class Pawn(color: Color) : ChessPiece(PAWN, color) {
+    override fun getPossibleMoves(board: Board, position: Position): Set<Action.Move> = TODO()
+
     override fun getReachablePositionsFrom(position: Position) = TODO()
 }
 

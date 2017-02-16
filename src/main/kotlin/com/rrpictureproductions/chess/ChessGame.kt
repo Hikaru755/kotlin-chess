@@ -16,7 +16,7 @@ fun main(args: Array<String>) {
     println("${currentColor.name}, your turn")
     println()
     readLoop { input ->
-        val action = parseAction(input)
+        val action = parseAction(input, board)
         val tryAgain = { msg: String ->
             println(msg)
             println()
@@ -35,21 +35,26 @@ fun main(args: Array<String>) {
         } catch (e: InvalidMoveException) {
             tryAgain("Impossible move: ${e.message}")
         }
-        currentColor = when(currentColor) { Color.WHITE -> Color.BLACK; Color.BLACK -> Color.WHITE }
+        currentColor = currentColor.next()
         if(action is Action.Reset) currentColor = Color.WHITE
         board.print()
+        if(board.getPossibleMovesForColor(currentColor).isEmpty()) {
+            println("$currentColor has no possible moves, ${currentColor.next()} wins!")
+        }
         println("${currentColor.name}, your turn")
         println()
     }
     println("Quitting the game. Bye!")
 }
 
-fun parseAction(input: String): Action? {
+fun Color.next() = when(this) { Color.WHITE -> Color.BLACK; Color.BLACK -> Color.WHITE }
+
+fun parseAction(input: String, board: Board): Action? {
     if(input.matches(resetRegex)) return Action.Reset()
     val matchResult = moveRegex.matchEntire(input)
     if(matchResult != null) {
         val (start, end) = matchResult.destructured
-        return Action.Move(start.toPosition(), end.toPosition())
+        return Action.getMove(board, start.toPosition(), end.toPosition())
     }
     return null
 }

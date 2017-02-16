@@ -1,15 +1,27 @@
 package com.rrpictureproductions.chess
 
 import com.rrpictureproductions.chess.Board.File.*
-import kotlin.collections.asSequence as lazy
+import com.rrpictureproductions.chess.figures.Color
+import kotlin.collections.asSequence as seq
 
 class Board {
 
     val files: Map<File, Map<Int, Field>> = File.values().associate { file -> file to RANKS.associate { it to Field(file, it) } }
     val ranks: Map<Int, Map<File, Field>> = RANKS.associate { rank -> rank to FILES.associate { it to files[it, rank]!! } }
+    val fields: List<Field> = files.values.flatMap { it.values }
 
     operator fun get(position: Position) = files[position.file, position.rank]!!
     operator fun get(file: File, rank: Int) = files[file, rank]
+    
+    fun getFieldsWithActivePieces(color: Color) =
+            fields.filter { it.piece?.color == color }
+
+    fun getPositionsUnderAttack(): Set<Position> = TODO()
+    fun getPossibleMovesForColor(color: Color): Set<Action.Move> =
+            getFieldsWithActivePieces(color)
+                    .flatMap { it.piece?.getPossibleMoves(this, it.position) ?: setOf() }
+                    .filterNotNull()
+                    .toSet()
 
     companion object {
         val FILES = File.values()
@@ -32,7 +44,7 @@ class Board {
         fun getPositionsOnRank(rank: Int) =
                 Board.FILES.map { file -> Position(file, rank) }.toSet()
         fun getAdjacentPositions(position: Position) =
-                (-1..1).lazy().crossproduct((-1..1).lazy())
+                (-1..1).seq().crossproduct((-1..1).seq())
                         .filter { it != 0 to 0 }
                         .map { position.move(it.first, it.second) }
                         .filterNotNull()
@@ -61,7 +73,7 @@ class Board {
                 getRightDownDiagonalFrom(position) +
                 getRightUpDiagonalFrom(position)
     }
-
+    
     enum class File {
         A, B, C, D, E, F, G, H;
 
