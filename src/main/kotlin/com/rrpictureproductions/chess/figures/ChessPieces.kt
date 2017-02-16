@@ -10,6 +10,7 @@ import com.rrpictureproductions.chess.figures.Initials.KNIGHT
 import com.rrpictureproductions.chess.figures.Initials.PAWN
 import com.rrpictureproductions.chess.figures.Initials.QUEEN
 import com.rrpictureproductions.chess.figures.Initials.ROOK
+import kotlin.collections.asSequence as lazy
 
 
 abstract class ChessPiece(val initial: String, val color: Color) {
@@ -47,7 +48,12 @@ class Bishop(color: Color) : ChessPiece(BISHOP, color) {
 
 class Knight(color: Color) : ChessPiece(KNIGHT, color) {
     override val canJump = true
-    override fun getReachablePositionsFrom(position: Position) = TODO()
+    override fun getReachablePositionsFrom(position: Position) =
+            setOf(-2, -1, 1, 2).lazy().crossproduct(setOf(-2, -1, 1, 2).lazy())
+                    .filter { Math.abs(it.first) != Math.abs(it.second) }
+                    .map { position.move(it.first, it.second) }
+                    .filterNotNull()
+                    .toSet()
 }
 
 class Pawn(color: Color) : ChessPiece(PAWN, color) {
