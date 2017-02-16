@@ -1,4 +1,5 @@
 import com.rrpictureproductions.chess.crossproduct
+import kotlin.collections.asSequence as lazy
 import org.junit.Test
 
 /**
@@ -9,7 +10,7 @@ class ExtensionsTest {
     @Test
     fun testCrossProduct() {
         fun test(set1: Set<Any>, set2: Set<Any>, expect: Set<Any>) {
-            val actual = set1.crossproduct(set2).toSet()
+            val actual = set1.lazy().crossproduct(set2.lazy()).toSet()
             assertEquals(expect, actual)
         }
 
