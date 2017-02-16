@@ -26,6 +26,7 @@ fun main(args: Array<String>) {
             action.executeOn(board)
         } catch (e: InvalidMoveException) {
             println("Impossible move: ${e.message}")
+            println()
             println("${currentColor.name}, try again")
             println()
             skip()
