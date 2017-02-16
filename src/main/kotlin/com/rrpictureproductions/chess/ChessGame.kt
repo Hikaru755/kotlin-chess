@@ -17,19 +17,23 @@ fun main(args: Array<String>) {
     println()
     readLoop { input ->
         val action = parseAction(input)
-        if(action == null) {
-            println("I did not understand that. Please try again")
-            println()
-            skip()
-        }
-        try {
-            action.executeOn(board)
-        } catch (e: InvalidMoveException) {
-            println("Impossible move: ${e.message}")
+        val tryAgain = { msg: String ->
+            println(msg)
             println()
             println("${currentColor.name}, try again")
             println()
             skip()
+        }
+        if(action == null) {
+            tryAgain("I did not understand that.")
+        }
+        if(action is Action.Move && board[action.from].piece?.color != currentColor) {
+            tryAgain("You cannot move your opponent's pieces.")
+        }
+        try {
+            action.executeOn(board)
+        } catch (e: InvalidMoveException) {
+            tryAgain("Impossible move: ${e.message}")
         }
         currentColor = when(currentColor) { Color.WHITE -> Color.BLACK; Color.BLACK -> Color.WHITE }
         if(action is Action.Reset) currentColor = Color.WHITE

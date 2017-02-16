@@ -45,20 +45,25 @@ sealed class Action {
         override fun checkIsValidOn(board: Board) {
             val fromField = board[from]
             val toField = board[to]
-            val movingPiece = fromField.piece ?: throw InvalidMoveException("There is no piece on that field")
+            val movingPiece = fromField.piece ?: throw InvalidMoveException("There is no piece on $from")
             val reachablePositions = movingPiece.getReachablePositionsFrom(fromField.position)
             if(toField.position !in reachablePositions) throw InvalidMoveException("This move is not possible with this piece")
-            if(!movingPiece.canJump) {
-                val nextPosition = getStepsIterator(from, to)
-                var next = nextPosition(fromField.position)
-                while(next != toField.position) {
-                    if(board[next].piece != null) {
-                        throw InvalidMoveException("There is a piece in the way on $next")
-                    }
-                    next = nextPosition(next)
-                }
-            }
             val capturedPiece = toField.piece
+            if(movingPiece.color == capturedPiece?.color) throw InvalidMoveException("There is already one of your pieces on $to")
+            if(!movingPiece.canJump) {
+                checkPath(board, fromField, toField)
+            }
+        }
+
+        private fun checkPath(board: Board, fromField: Field, toField: Field) {
+            val nextPosition = getStepsIterator(from, to)
+            var next = nextPosition(fromField.position)
+            while (next != toField.position) {
+                if (board[next].piece != null) {
+                    throw InvalidMoveException("There is a piece in the way on $next")
+                }
+                next = nextPosition(next)
+            }
         }
 
         override fun doExecuteOn(board: Board) {
