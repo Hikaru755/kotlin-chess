@@ -1,8 +1,7 @@
 package com.rrpictureproductions.chess
 
 import com.rrpictureproductions.chess.Board.File.*
-import com.rrpictureproductions.chess.figures.*
-import com.rrpictureproductions.chess.figures.Color.*
+import kotlin.collections.asSequence as lazy
 
 class Board {
 
@@ -33,7 +32,7 @@ class Board {
         fun getPositionsOnRank(rank: Int) =
                 Board.FILES.map { file -> Position(file, rank) }.toSet()
         fun getAdjacentPositions(position: Position) =
-                (-1..1).asSequence().crossproduct((-1..1).asSequence())
+                (-1..1).lazy().crossproduct((-1..1).lazy())
                         .filter { it != 0 to 0 }
                         .map { position.move(it.first, it.second) }
                         .filterNotNull()
