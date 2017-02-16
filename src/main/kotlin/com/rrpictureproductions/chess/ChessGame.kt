@@ -69,7 +69,7 @@ fun Board.print() {
     Board.RANKS.reversed().forEach { rank ->
         print("$rank │ ")
         Board.FILES.forEach { file ->
-            print("${files[file, rank]?.piece?.toString() ?: "  "} | ")
+            print("${files[file, rank]?.piece?.toString() ?: PIECE_SPACE} | ")
         }
         println()
         if(rank != Board.RANKS.first) {
@@ -79,14 +79,18 @@ fun Board.print() {
     println(PRINT_BOT)
     print(" ")
     Board.FILES.forEach { file ->
-        print("   $file ")
+        print("  $PIECE_SPACE$file")
     }
     println()
 }
 
-val PRINT_TOP = "  ┌────┬────┬────┬────┬────┬────┬────┬────┐"
-val PRINT_BET = "  ├────┼────┼────┼────┼────┼────┼────┼────┤"
-val PRINT_BOT = "  └────┴────┴────┴────┴────┴────┴────┴────┘"
+val PIECE_SPACE = "      "
+val PIECE_THIRD_SPACE = "  "
+val HOR_LINE = "$PIECE_THIRD_SPACE─$PIECE_THIRD_SPACE─$PIECE_THIRD_SPACE"
+
+val PRINT_TOP = "  ┌${"$HOR_LINE┬".repeat(7)}$HOR_LINE┐"
+val PRINT_BET = "  ├${"$HOR_LINE┼".repeat(7)}$HOR_LINE┤"
+val PRINT_BOT = "  └${"$HOR_LINE┴".repeat(7)}$HOR_LINE┘"
 
 fun <T : ChessPiece> T.name(): String = this.javaClass.simpleName
 
