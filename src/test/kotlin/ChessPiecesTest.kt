@@ -55,6 +55,22 @@ class ChessPiecesTest {
     }
 
     @Test
+    fun testReachablePositionsBishop() {
+        val bishop = Bishop(Color.WHITE)
+
+        val actual = bishop.getReachablePositionsFrom("D4".toPosition())
+        val major = setOf("A1", "B2", "C3", "E5", "F6", "G7", "H8")
+        val minor = setOf("A7", "B6", "C5", "E3", "F2", "G1")
+        val expected = (major + minor).map(String::toPosition).toSet()
+        assertEquals(expected, actual)
+
+        val actual2 = bishop.getReachablePositionsFrom("H1".toPosition())
+        val minor2 = setOf("A8", "B7", "C6", "D5", "E4", "F3", "G2")
+        val expected2 = (minor2).map(String::toPosition).toSet()
+        assertEquals(expected2, actual2)
+    }
+
+    @Test
     fun testReachablePositionsKnight() {
         val knight = Knight(Color.WHITE)
 
