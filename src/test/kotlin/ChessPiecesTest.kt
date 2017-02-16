@@ -1,7 +1,4 @@
-import com.rrpictureproductions.chess.figures.Color
-import com.rrpictureproductions.chess.figures.King
-import com.rrpictureproductions.chess.figures.Knight
-import com.rrpictureproductions.chess.figures.Queen
+import com.rrpictureproductions.chess.figures.*
 import com.rrpictureproductions.chess.toPosition
 import org.junit.Test
 
@@ -37,6 +34,23 @@ class ChessPiecesTest {
         val rank2 = setOf("A1", "B1", "C1", "D1", "E1", "F1", "G1")
         val minor2 = setOf("A8", "B7", "C6", "D5", "E4", "F3", "G2")
         val expected2 = (file2 + rank2 + minor2).map(String::toPosition).toSet()
+        assertEquals(expected2, actual2)
+    }
+
+    @Test
+    fun testReachablePositionsRook() {
+        val rook = Rook(Color.WHITE)
+
+        val actual = rook.getReachablePositionsFrom("D4".toPosition())
+        val file = setOf("D1", "D2", "D3", "D5", "D6", "D7", "D8")
+        val rank = setOf("A4", "B4", "C4", "E4", "F4", "G4", "H4")
+        val expected = (file + rank).map(String::toPosition).toSet()
+        assertEquals(expected, actual)
+
+        val actual2 = rook.getReachablePositionsFrom("H1".toPosition())
+        val file2 = setOf("H2", "H3", "H4", "H5", "H6", "H7", "H8")
+        val rank2 = setOf("A1", "B1", "C1", "D1", "E1", "F1", "G1")
+        val expected2 = (file2 + rank2).map(String::toPosition).toSet()
         assertEquals(expected2, actual2)
     }
 
