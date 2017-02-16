@@ -3,5 +3,5 @@
  */
 
 fun <T, U> assertEquals(expected: T?, actual: U?) {
-    assert(expected == actual) { "Expected $expected, was $actual" }
+    assert(expected == actual) { "\nExpected:\n$expected\nWas:\n$actual" }
 }
