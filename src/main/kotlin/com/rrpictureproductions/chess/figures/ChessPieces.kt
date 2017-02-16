@@ -28,9 +28,10 @@ class King(color: Color) : ChessPiece(KING, color) {
 
 class Queen(color: Color) : ChessPiece(QUEEN, color) {
     override fun getReachablePositionsFrom(position: Position) = Board.run {
-        getPositionsOnFile(position.file) +
-        getPositionsOnRank(position.rank) +
-        getDiagonalPositionsFrom(position)
+        getPositionsOnFile(position.file)
+                .plus(getPositionsOnRank(position.rank))
+                .plus(getDiagonalPositionsFrom(position))
+                .minus(position)
     }
 }
 
