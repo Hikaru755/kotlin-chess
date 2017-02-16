@@ -46,7 +46,18 @@ sealed class Action {
             val fromField = board[from]
             val toField = board[to]
             val movingPiece = fromField.piece ?: throw InvalidMoveException("There is no piece on that field")
-            if(toField.position !in movingPiece.getReachablePositionsFrom(fromField.position)) throw InvalidMoveException("This move is not possible with this piece")
+            val reachablePositions = movingPiece.getReachablePositionsFrom(fromField.position)
+            if(toField.position !in reachablePositions) throw InvalidMoveException("This move is not possible with this piece")
+            if(!movingPiece.canJump) {
+                val nextPosition = getStepsIterator(from, to)
+                var next = nextPosition(fromField.position)
+                while(next != toField.position) {
+                    if(board[next].piece != null) {
+                        throw InvalidMoveException("There is a piece in the way on $next")
+                    }
+                    next = nextPosition(next)
+                }
+            }
             val capturedPiece = toField.piece
         }
 
@@ -78,9 +89,9 @@ fun getPathType(from: Position, to: Position): PathType {
     return PathType(fileStep, rankStep)
 }
 
-fun getPathFinder(from: Position, to: Position): (Position) -> Position? {
+fun getStepsIterator(from: Position, to: Position): (Position) -> Position {
     val pathType = getPathType(from, to)
-    return { it.move(pathType.fileStep, pathType.rankStep) }
+    return { it.move(pathType.fileStep, pathType.rankStep) ?: throw RuntimeException("This should not happen") }
 }
 
 class PathType(val fileStep: Int, val rankStep: Int)
