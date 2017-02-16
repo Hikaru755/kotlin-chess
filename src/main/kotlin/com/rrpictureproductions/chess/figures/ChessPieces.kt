@@ -59,7 +59,7 @@ object Initials {
     val QUEEN = "Q"
     val ROOK = "R"
     val BISHOP = "B"
-    val KNIGHT = "K"
+    val KNIGHT = "N"
     val PAWN = "P"
 }
 
